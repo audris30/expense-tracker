@@ -18,7 +18,8 @@ module.exports = {
     getExpensesByCategory,
     getMaxExpense,
     addExpense,
-    deleteExpense
+    deleteExpense,
+    updateExpense
 }
 
 function getAverageExpense() {
@@ -47,8 +48,15 @@ function getMaxExpense() {
     }, 0);
 }
 
+let nextId = 1;
+
 function addExpense(expense) {
-    expenses.push(expense);
+    const newExpense = {
+        id: nextId++,
+        ...expense
+    };
+
+    expenses.push(newExpense);
 }
 
 function deleteExpense(id) {
@@ -58,3 +66,10 @@ function deleteExpense(id) {
 
     expenses.splice(index, 1);
 }
+
+function updateExpense(id, updatedData) {
+    expenses = expenses.map(expense =>
+        expense.id == id ? { ...expense, ...updatedData } : expense
+    );
+}
+
