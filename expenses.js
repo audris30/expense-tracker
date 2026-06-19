@@ -62,7 +62,14 @@ console.log(getExpenseCount());
 // Returns the most expensive expense
 function getMostExpensiveExpense() {
     return expenses.reduce((currentMost, expense) => {
-        return expense.amount > currentMost.amount
+        return expense.amount > currentMost.
+        
+        
+        
+        
+        
+        
+        mount
             ? expense
             : currentMost
     })

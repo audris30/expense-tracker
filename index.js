@@ -4,17 +4,27 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-const Expense = require("./models/Expense");
 const expenseRoutes = require("./routes/expenseRoutes");
 
 const app = express();
 
+// =====================
+// MIDDLEWARE
+// =====================
 app.use(cors());
 app.use(express.json());
 
+// =====================
+// ROUTES
+// =====================
 app.use("/expenses", expenseRoutes);
 
-console.log("MONGO URL:", process.env.MONGO_URL);
+// =====================
+// ROOT
+// =====================
+app.get("/", (req, res) => {
+    res.send("API VEIKIA");
+});
 
 // =====================
 // MONGODB CONNECT
@@ -28,66 +38,16 @@ mongoose.connect(process.env.MONGO_URL)
         console.log(err);
     });
 
-    mongoose.set("debug", true);
+// optional debug (gali palikti arba ištrinti)
+mongoose.set("debug", true);
 
 // =====================
-// ROOT
+// SERVER START
 // =====================
-app.get("/", (req, res) => {
-    res.send("API VEIKIA");
-});
+const PORT = process.env.PORT || 3333;
 
-// =====================
-// GET ALL
-// =====================
-app.get("/expenses", async (req, res) => {
-    try {
-        const expenses = await Expense.find();
+console.log("MONGO_URL:", process.env.MONGO_URL);
 
-        res.json(expenses);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// =====================
-// UPDATE
-// =====================
-app.put("/expenses/:id", async (req, res) => {
-    try {
-        const updatedExpense = await Expense.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
-
-        res.json({
-            message: "Expense updated",
-            expense: updatedExpense
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// =====================
-// DELETE
-// =====================
-app.delete("/expenses/:id", async (req, res) => {
-    try {
-        await Expense.findByIdAndDelete(req.params.id);
-
-        res.json({
-            message: "Expense deleted"
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// =====================
-// START SERVER
-// =====================
-app.listen(3333, () => {
-    console.log("Server running on http://localhost:3333");
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });

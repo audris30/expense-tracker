@@ -3,6 +3,7 @@ import axios from "axios";
 import "./App.css";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
+
 function App() {
   const [expenses, setExpenses] = useState([]);
   const [editId, setEditId] = useState(null);
@@ -21,7 +22,7 @@ function App() {
   // GET
   const fetchExpenses = async () => {
     try {
-      const res = await axios.get("http://localhost:3333/expenses");
+      const res = await axios.get("https://expense-tracker-x4r3.onrender.com/expenses");
       setExpenses(res.data);
     } catch (err) {
       console.log(err);
@@ -55,7 +56,7 @@ function App() {
   // DELETE
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3333/expenses/${id}`);
+      await axios.delete(`https://expense-tracker-x4r3.onrender.com/expenses/${id}`);
       fetchExpenses();
     } catch (err) {
       console.log(err);
@@ -64,19 +65,22 @@ function App() {
 
   // SUBMIT (CREATE + UPDATE)
   const handleSubmit = async (e) => {
-    e.preventDefault();
 
+    console.log("SUBMIT STARTED");
+    console.log("API URL: https://expense-tracker-x4r3.onrender.com/expenses");
+
+    e.preventDefault();
     try {
       if (editId) {
         await axios.put(
-          `http://localhost:3333/expenses/${editId}`,
+          `https://expense-tracker-x4r3.onrender.com/expenses/${editId}`,
           {
             ...form,
             amount: Number(form.amount)
           }
         );
       } else {
-        await axios.post("http://localhost:3333/expenses", {
+        await axios.post("https://expense-tracker-x4r3.onrender.com/expenses", {
           ...form,
           amount: Number(form.amount)
         });
@@ -137,7 +141,7 @@ function App() {
   return (
     <div className="container">
       <h1>Car Expense Tracker</h1>
-      
+
       <input
         type="text"
         placeholder="Search (fuel, service, parking...)"
@@ -195,77 +199,77 @@ function App() {
 
       </div>
 
-      {/* FORM */ }
-  <form onSubmit={handleSubmit} className="form">
-    <input
-      type="date"
-      name="date"
-      value={form.date}
-      onChange={handleChange}
-    />
+      {/* FORM */}
+      <form onSubmit={handleSubmit} className="form">
+        <input
+          type="date"
+          name="date"
+          value={form.date}
+          onChange={handleChange}
+        />
 
-    <select
-      name="category"
-      value={form.category}
-      onChange={handleChange}
-    >
-      <option value="">Select category</option>
-      <option value="Fuel">Fuel</option>
-      <option value="Service">Service</option>
-      <option value="Parking">Parking</option>
-    </select>
+        <select
+          name="category"
+          value={form.category}
+          onChange={handleChange}
+        >
+          <option value="">Select category</option>
+          <option value="Fuel">Fuel</option>
+          <option value="Service">Service</option>
+          <option value="Parking">Parking</option>
+        </select>
 
-    <input
-      type="number"
-      name="amount"
-      value={form.amount}
-      onChange={handleChange}
-      placeholder="Amount (€)"
-    />
+        <input
+          type="number"
+          name="amount"
+          value={form.amount}
+          onChange={handleChange}
+          placeholder="Amount (€)"
+        />
 
-    <input
-      type="text"
-      name="description"
-      value={form.description}
-      onChange={handleChange}
-      placeholder="Description"
-    />
+        <input
+          type="text"
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          placeholder="Description"
+        />
 
-    <button type="submit">
-      {editId ? "Update Expense" : "Add Expense"}
-    </button>
-  </form>
+        <button type="submit">
+          {editId ? "Update Expense" : "Add Expense"}
+        </button>
+      </form>
 
 
-  {/* TABLE */ }
-  <table border="1" cellPadding="8" style={{ width: "100%" }}>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Category</th>
-        <th>Amount</th>
-        <th>Description</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      {[...filteredExpenses]
-        .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
-        .map((e) => (
-          <tr key={e._id} className="expense-item">
-            <td>{e.date}</td>
-            <td>{e.category}</td>
-            <td>{e.amount}€</td>
-            <td>{e.description}</td>
-            <td>
-              <button onClick={() => handleEdit(e)}>Edit</button>
-              <button onClick={() => handleDelete(e._id)}>Delete</button>
-            </td>
+      {/* TABLE */}
+      <table border="1" cellPadding="8" style={{ width: "100%" }}>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Actions</th>
           </tr>
-        ))}
-    </tbody>
-  </table>
+        </thead>
+
+        <tbody>
+          {[...filteredExpenses]
+            .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
+            .map((e) => (
+              <tr key={e._id} className="expense-item">
+                <td>{e.date}</td>
+                <td>{e.category}</td>
+                <td>{e.amount}€</td>
+                <td>{e.description}</td>
+                <td>
+                  <button onClick={() => handleEdit(e)}>Edit</button>
+                  <button onClick={() => handleDelete(e._id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
     </div >
   );
 }
